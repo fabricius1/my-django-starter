@@ -10,7 +10,7 @@ import io
 # - only change the information after the equal signs;
 # - don't write/use quotes (it's already a multiline string);
 # - separate the apps names with commas and no spaces.
-config_info = f"""
+config_info = f'''
 [DJANGO]
 
 PYTHON_ALIAS=python
@@ -20,7 +20,7 @@ PROJECT_NAME=project_main
 APPS=films,budget,public,authentication
 LANGUAGE=pt-br
 TIMEZONE=America/Sao_Paulo
-"""
+'''
 
 # set the config object
 buffer = io.StringIO(config_info)
@@ -46,7 +46,7 @@ else:
     
 # define 3 functions to create the Django app(s) later:
 def modify_views_py(app_name):
-    """
+    '''
     Rewrite the respective 'views.py' file from the current django app
     with a basic function view called '{app_name}_starter', which returns
     a <h1> HTML element as its response.
@@ -56,10 +56,10 @@ def modify_views_py(app_name):
     
     Return:
     - None
-    """
+    '''
     with open(os.path.join(app_name, 'views.py'), 'w') as file:
         views_file_content=(
-            'from django.http import HttpResponse\n\n'
+            'from django.http import HttpResponse\n\n\n'
             f'def {app_name}_starter(request):\n'
             f'    return HttpResponse("<h1>{app_name.upper()} PAGE</h1>")\n'
         )
@@ -67,7 +67,7 @@ def modify_views_py(app_name):
 
 
 def create_urls_py(app_name):
-    """
+    '''
     Create a 'urls.py' file inside the folder from the current django app
     with a route named '{app_name}_all'. This '{app_name}/urls.py' file will be included
     in the entrypoint '{project_name}/urls.py' later.
@@ -77,13 +77,13 @@ def create_urls_py(app_name):
     
     Return:
     - None
-    """
+    '''
 
     urls_file_content = ('from django.urls import path\n'
-                         'from . import views\n\n'
+                         'from . import views\n\n\n'
                          f"app_name = '{app_name}'\n\n"
                          'urlpatterns = [\n'
-                         f"    path('', views.{app_name}_starter,"
+                         f"    path('', views.{app_name}_starter, "
                          f"name='{app_name}_all')\n"
                          ']')
         
@@ -92,7 +92,7 @@ def create_urls_py(app_name):
 
 
 def create_new_django_app(app_name, python_alias='python', index=''):
-    """
+    '''
     Start the Django app in the app_name parameter, create its 
     template folders, make modifications to its 'views.py' file and
     create a 'urls.py' for the app.
@@ -110,7 +110,7 @@ def create_new_django_app(app_name, python_alias='python', index=''):
     
     Return:
     - None
-    """
+    '''
     
     # start app
     os.system(f'{python_alias} manage.py startapp {app_name}')
@@ -127,9 +127,9 @@ def create_new_django_app(app_name, python_alias='python', index=''):
             
     # print console information
     if index:
-        print(f"Created Django app ({index}): {app_name}")
+        print(f'Created Django app ({index}): {app_name}')
     else:
-        print(f"Created Django app: {app_name}")
+        print(f'Created Django app: {app_name}')
 
 
 # MAIN SCRIPT STARTS HERE
@@ -173,7 +173,7 @@ with open(urls_py_path) as file:
     pattern = re.compile('import path\n', re.DOTALL)
     new = ('import path, include\n'
            'from django.http import HttpResponse'
-           ' # remove this import later\n\n'
+           ' # remove this import later\n\n\n'
            '# remove this function later:\n'
            'def starter_home(request):\n'
            '    return HttpResponse("<h1>HOME PAGE</h1>")\n\n')
@@ -209,7 +209,7 @@ for folder in extra_folders:
     
 print('Created extra folders')
 
-# make changes to the settings.py file
+# make changes to the {project_name}/settings.py file
 setting_py_path = os.path.join(project_name, 'settings.py')
 
 with open(setting_py_path) as file:
@@ -221,14 +221,14 @@ with open(setting_py_path) as file:
 
     # insert an import to the 'os' module
     pattern = re.compile('from pathlib import Path\n', re.DOTALL)
-    content = pattern.sub('from pathlib import Path\nimport os\n', content)
+    content = pattern.sub('from pathlib import Path\nimport os\n\n', content)
 
     # insert django_extensions in INSTALLED_APPS
     pattern = re.compile("'django.contrib.staticfiles',\n", re.DOTALL)
     new_string = ("'django.contrib.staticfiles',\n\n"
-                  "    # aditional packages:\n"
+                  '    # aditional packages:\n'
                   "    'django_extensions',\n\n"
-                  "    # personal apps:\n")
+                  '    # personal apps:\n"')
     
     # insert the app(s) name(s) in INSTALLED_APPS
     for app in apps_list:
